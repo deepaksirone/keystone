@@ -249,12 +249,31 @@ add_custom_target("tests" DEPENDS examples ${overlay_root}
   COMMAND find ${example_wrkdir} -name "tests.ke" | xargs -I{} rsync {} ${overlay_root}
   COMMENT "Copying example enclave packages"
   )
+###############################################################################
+## COMPONENT: keystore
+###############################################################################
+add_custom_target("keystore_copy" DEPENDS examples ${overlay_root}
+  COMMAND find ${example_wrkdir} -name "keystore.ke" | xargs -I{} rsync {} ${overlay_root}
+  COMMENT "Copying Keystore to image"
+  )
+
+add_custom_target("enc_rule_copy" DEPENDS examples ${overlay_root}
+  COMMAND find ${example_wrkdir} -name "enc_rule.ke" | xargs -I{} rsync {} ${overlay_root}
+  COMMENT "Copying Encrypted Rule to image"
+  )
+
+add_custom_target("ntp_client_copy" DEPENDS examples ${overlay_root}
+  COMMAND find ${example_wrkdir} -name "ntp_client.ke" | xargs -I{} rsync {} ${overlay_root}
+  COMMENT "Copying NTP Client to image"
+  )
+
+
 
 ###############################################################################
 ## COMPONENT: image
 ###############################################################################
 
-add_custom_target("image-deps" DEPENDS "tests" "driver" ${overlay_root}
+add_custom_target("image-deps" DEPENDS "tests" "keystore_copy" "ntp_client_copy" "enc_rule_copy" "driver" ${overlay_root}
   COMMAND find ${driver_wrkdir} -name "*.ko" -exec cp {} ${overlay_root} \\\\;
 )
 add_custom_target("image" DEPENDS "buildroot" "sm"
